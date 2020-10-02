@@ -1,17 +1,9 @@
 import { LitElement, html} from 'lit-element';
-import '@vaadin/vaadin-text-field';
-import '@vaadin/vaadin-button';
-import '@vaadin/vaadin-checkbox';
-import '@vaadin/vaadin-radio-button/vaadin-radio-button';
-import '@vaadin/vaadin-radio-button/vaadin-radio-group';
+import {VisibilityFilters} from '../redux/reducer.js';
+import { connect } from 'pwa-helpers';
+import { store } from '../redux/store.js';
 
-const VisibilityFilters = { 
-    SHOW_ALL: 'All',
-    SHOW_ACTIVE: 'Active',
-    SHOW_COMPLETED: 'Completed'
-  };
-
-class TodoView extends LitElement {
+class TodoView extends connect(store)(LitElement) {
     static get properties() { 
         return {
           todos: { type: Array },
@@ -19,12 +11,10 @@ class TodoView extends LitElement {
           task: { type: String }
         };
       }
-    
-      constructor() { 
-        super();
-        this.todos = [];
-        this.filter = VisibilityFilters.SHOW_ALL;
-        this.task = ''; 
+
+      stateChanged(state) {
+        this.todos = state.todos;
+        this.filter = state.filter;
       }
 
     render() {
@@ -60,7 +50,7 @@ class TodoView extends LitElement {
             <div class="input-layoyt" @keyup="${this.shortcutListener}"> 
               <vaadin-text-field
                   placeholder="Task"
-                  value="${this.task}" 
+                  value="${this.task || ''}" 
                   @change="${this.updateTask}"> 
               </vaadin-text-field>
 
